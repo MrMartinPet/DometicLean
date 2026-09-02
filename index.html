@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8" />
+    <title>Flakmeter Lastplan</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            font-size: 1.6rem;
+            margin-bottom: 0.5rem;
+        }
+        .summary {
+            margin-bottom: 1rem;
+        }
+        .summary span {
+            font-weight: 600;
+        }
+        #truck {
+            border: 2px solid #444;
+            border-radius: 8px;
+            padding: 8px;
+            max-width: 900px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 3 pallar i bredd (EUR-pall 0,8 m) */
+            grid-auto-rows: 60px;
+            gap: 4px;
+            background: #f5f5f5;
+        }
+        .pallet {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: #ffffff;
+            text-align: center;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+        .legend {
+            margin-top: 1rem;
+            max-width: 900px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+        }
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+        }
+        .info {
+            font-size: 0.85rem;
+            color: #555;
+            margin-top: 0.5rem;
+            max-width: 900px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Flakmeter Lastplan – Demo</h1>
+    <div class="summary">
+        <div>Trailer: <span>13,6 m</span> lång, <span>2,4 m</span> bred (≈ 13,6 flakmeter)</div>
+        <div>Beräknad last: <span id="totalFlm"></span></div>
+        <div id="statusText"></div>
+    </div>
+
+    <div id="truck"></div>
+
+    <div class="legend" id="legend"></div>
+
+    <div class="info">
+        Denna sida är en enkel demo. Data är hårdkodad i JavaScript men matchar samma produkter som i Excel-filen
+        <strong>flakmeter_plan.xlsx</strong>. Varje ruta motsvarar en pall och färgen visar produkt.
+    </div>
+
+    <script>
+        const trailerFlm = 13.6;
+
+        const products = [
+            { id: "PROD-001", desc: "Fönster typ A", antalKolli: 120, kolliPerPall: 40, pallL: 1.2, pallB: 0.8, color: "#1f77b4" },
+            { id: "PROD-002", desc: "Fönster typ B", antalKolli: 75,  kolliPerPall: 25, pallL: 1.2, pallB: 0.8, color: "#2ca02c" },
+            { id: "PROD-003", desc: "Dörr typ C",    antalKolli: 60,  kolliPerPall: 20, pallL: 1.2, pallB: 1.0, color: "#ff7f0e" },
+            { id: "PROD-004", desc: "Rutor typ D",   antalKolli: 48,  kolliPerPall: 24, pallL: 1.0, pallB: 1.0, color: "#d62728" }
+        ];
+
+        function buildPallets(data) {
+            const pallets = [];
+            data.forEach(p => {
+                const antalPallar = Math.ceil(p.antalKolli / p.kolliPerPall);
+                for (let i = 0; i < antalPallar; i++) {
+                    pallets.push({
+                        produkt: p.id,
+                        desc: p.desc,
+                        pallL: p.pallL,
+                        pallB: p.pallB,
+                        color: p.color
+                    });
+                }
+            });
+            return pallets;
+        }
+
+        const pallets = buildPallets(products);
+
+        const totalFlm = products.reduce((sum, p) => {
+            const antalPallar = Math.ceil(p.antalKolli / p.kolliPerPall);
+            const flmPerPall = (p.pallL * p.pallB) / 2.4;
+            return sum + antalPallar * flmPerPall;
+        }, 0);
+
+        document.getElementById("totalFlm").textContent = totalFlm.toFixed(2) + " flm";
+
+        const statusText = document.getElementById("statusText");
+        if (totalFlm > trailerFlm) {
+            const over = (totalFlm - trailerFlm).toFixed(2);
+            statusText.textContent = "Status: ÖVERLAST – " + over + " flakmeter över trailergränsen.";
+            statusText.style.color = "#d62728";
+            statusText.style.fontWeight = "600";
+        } else {
+            const margin = (trailerFlm - totalFlm).toFixed(2);
+            statusText.textContent = "Status: OK – " + margin + " flakmeter kvar till max.";
+            statusText.style.color = "#2ca02c";
+            statusText.style.fontWeight = "600";
+        }
+
+        const truckEl = document.getElementById("truck");
+        pallets.forEach((p, index) => {
+            const div = document.createElement("div");
+            div.className = "pallet";
+            div.style.backgroundColor = p.color;
+            div.textContent = p.produkt + " #" + (index + 1);
+            div.title = p.desc;
+            truckEl.appendChild(div);
+        });
+
+        const legendEl = document.getElementById("legend");
+        products.forEach(p => {
+            const item = document.createElement("div");
+            item.className = "legend-item";
+
+            const colorBox = document.createElement("div");
+            colorBox.className = "legend-color";
+            colorBox.style.backgroundColor = p.color;
+
+            const label = document.createElement("span");
+            label.textContent = p.id + " – " + p.desc;
+
+            item.appendChild(colorBox);
+            item.appendChild(label);
+            legendEl.appendChild(item);
+        });
+    </script>
+</body>
+</html>

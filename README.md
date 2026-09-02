@@ -7,4 +7,6 @@ En mobilanpassad flashcard-app med 10 fabriksprocesser.
 - Svep höger för **Fungerar bra**.
 - Översikten visar samtliga processer och resultatet.
 
-Appen körs direkt från `index.html` och kräver ingen installation.
+Appen finns i `processkort/index.html` och kräver ingen installation.
+
+Den befintliga startsidan i repot är orörd.

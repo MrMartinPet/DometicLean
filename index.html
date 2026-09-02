@@ -1,163 +1,66 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-    <meta charset="UTF-8" />
-    <title>Flakmeter Lastplan</title>
-    <style>
-        body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            margin: 20px;
-        }
-        h1 {
-            font-size: 1.6rem;
-            margin-bottom: 0.5rem;
-        }
-        .summary {
-            margin-bottom: 1rem;
-        }
-        .summary span {
-            font-weight: 600;
-        }
-        #truck {
-            border: 2px solid #444;
-            border-radius: 8px;
-            padding: 8px;
-            max-width: 900px;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr); /* 3 pallar i bredd (EUR-pall 0,8 m) */
-            grid-auto-rows: 60px;
-            gap: 4px;
-            background: #f5f5f5;
-        }
-        .pallet {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            color: #ffffff;
-            text-align: center;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
-        }
-        .legend {
-            margin-top: 1rem;
-            max-width: 900px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.85rem;
-        }
-        .legend-color {
-            width: 16px;
-            height: 16px;
-            border-radius: 3px;
-        }
-        .info {
-            font-size: 0.85rem;
-            color: #555;
-            margin-top: 0.5rem;
-            max-width: 900px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#071a33">
+<title>Valveckan 2026 – Flashcards</title>
+<style>
+:root{--navy:#071a33;--blue:#0d3b70;--yellow:#ffd500;--paper:#f7f8fb;--ink:#101828;--muted:#667085;--line:#dfe4ec;--white:#fff;--shadow:0 22px 60px rgba(3,18,40,.18)}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(180deg,#edf3fb 0%,#f9fafc 55%,#eef2f7 100%);color:var(--ink);overscroll-behavior:none}
+body{min-height:100svh}.app{min-height:100svh;max-width:520px;margin:0 auto;padding:env(safe-area-inset-top) 16px env(safe-area-inset-bottom);display:flex;flex-direction:column}
+header{padding:18px 2px 10px}.topline{display:flex;align-items:center;justify-content:space-between;gap:12px}.brand{display:flex;align-items:center;gap:9px;font-weight:900;letter-spacing:-.02em;color:var(--navy)}.flag{width:28px;height:18px;border-radius:3px;background:#006aa7;position:relative;box-shadow:0 0 0 1px rgba(0,0,0,.08)}.flag:before{content:"";position:absolute;left:8px;top:0;width:4px;height:100%;background:#fecc00}.flag:after{content:"";position:absolute;left:0;top:7px;width:100%;height:4px;background:#fecc00}.countdown{font-size:12px;font-weight:800;background:var(--navy);color:#fff;padding:7px 9px;border-radius:999px;white-space:nowrap}.eyebrow{margin-top:16px;font-size:11px;font-weight:900;letter-spacing:.12em;color:#53657a;text-transform:uppercase}.title{font-size:31px;line-height:1.02;margin:4px 0 0;font-weight:950;letter-spacing:-.045em;color:var(--navy)}.subtitle{margin:8px 0 0;font-size:14px;line-height:1.45;color:#53657a}.progress-wrap{margin-top:14px;display:flex;align-items:center;gap:10px}.progress{height:6px;background:#d9e0ea;border-radius:99px;overflow:hidden;flex:1}.progress>div{height:100%;background:linear-gradient(90deg,#006aa7,#ffd500);border-radius:99px;transition:width .25s ease}.counter{font-size:12px;font-weight:800;color:#64748b;min-width:38px;text-align:right}
+.stage{position:relative;flex:1;min-height:470px;display:flex;align-items:center;justify-content:center;touch-action:pan-y;transition:transform .24s ease,opacity .24s ease}.card{width:100%;height:min(62svh,570px);min-height:430px;max-height:570px;perspective:1200px;cursor:pointer;user-select:none;-webkit-user-select:none}.inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.2,.72,.2,1)}.card.flipped .inner{transform:rotateY(180deg)}.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:28px;overflow:hidden;box-shadow:var(--shadow);border:1px solid rgba(7,26,51,.08)}.front{background:var(--navy);color:#fff;padding:26px;display:flex;flex-direction:column}.front:before{content:"";position:absolute;width:240px;height:240px;border:46px solid rgba(255,213,0,.11);border-radius:50%;right:-125px;top:-105px}.front:after{content:"";position:absolute;width:180px;height:180px;background:rgba(0,106,167,.24);border-radius:50%;left:-90px;bottom:-80px}.meta{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:center;gap:10px}.tag{font-size:11px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;background:var(--yellow);color:#071a33;padding:7px 9px;border-radius:999px}.date{font-size:12px;font-weight:750;color:#c9d5e4}.front-copy{position:relative;z-index:1;margin:auto 0}.front h2{font-size:34px;line-height:1.03;letter-spacing:-.04em;margin:0;font-weight:950}.lead{font-size:17px;line-height:1.42;color:#d7e2ef;margin:18px 0 0;max-width:95%}.hint{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,.15);padding-top:16px;font-size:12px;color:#c9d5e4}.hint strong{color:#fff}.flip-icon{width:36px;height:36px;border:1px solid rgba(255,255,255,.22);border-radius:50%;display:grid;place-items:center;font-size:18px}
+.back{transform:rotateY(180deg);background:#fff;padding:24px;display:flex;flex-direction:column;color:var(--ink)}.back-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.back h3{font-size:25px;line-height:1.08;letter-spacing:-.035em;margin:8px 0 0;color:var(--navy)}.source-badge{font-size:11px;font-weight:900;color:#52637a;background:#eef2f6;padding:7px 9px;border-radius:999px;white-space:nowrap}.details{display:grid;gap:11px;margin:22px 0 0}.detail{display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:flex-start;font-size:14px;line-height:1.42;color:#344054}.num{width:28px;height:28px;border-radius:9px;background:#edf4fb;color:#0d3b70;display:grid;place-items:center;font-size:12px;font-weight:950}.why{margin-top:18px;padding:15px 16px;background:#fff8cc;border-radius:17px;border:1px solid #f2dc65}.why b{display:block;font-size:11px;letter-spacing:.09em;text-transform:uppercase;margin-bottom:5px;color:#6c5b00}.why span{font-size:14px;line-height:1.42}.back-footer{margin-top:auto;padding-top:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;border-top:1px solid var(--line)}.source-link{appearance:none;text-decoration:none;background:var(--navy);color:#fff;padding:10px 13px;border-radius:12px;font-size:12px;font-weight:850}.back-hint{font-size:11px;color:#77869a;text-align:right}
+.controls{display:grid;grid-template-columns:1fr auto 1fr;gap:9px;padding:8px 0 14px}.btn{border:0;border-radius:16px;min-height:48px;padding:0 13px;font-weight:850;font-size:13px;background:#fff;color:#26364b;box-shadow:0 8px 22px rgba(20,40,70,.08);cursor:pointer}.btn.primary{background:var(--yellow);color:#071a33;min-width:92px}.btn:active{transform:translateY(1px)}.btn.right{text-align:right}.note{text-align:center;font-size:10.5px;line-height:1.4;color:#7a8899;padding:0 8px 14px}
+.summary{width:100%;background:#fff;border-radius:28px;box-shadow:var(--shadow);padding:26px;border:1px solid rgba(7,26,51,.08)}.summary .check{width:58px;height:58px;border-radius:19px;background:var(--yellow);display:grid;place-items:center;font-size:28px;font-weight:950;color:var(--navy)}.summary h2{font-size:30px;line-height:1.05;margin:18px 0 8px;letter-spacing:-.04em;color:var(--navy)}.summary p{font-size:14px;line-height:1.5;color:#5f6e80;margin:0}.summary-list{margin:18px 0;display:grid;gap:9px}.summary-item{padding:11px 12px;border-radius:14px;background:#f5f7fa;font-size:12px;font-weight:800;color:#314057}.restart{width:100%;border:0;border-radius:15px;background:var(--navy);color:#fff;min-height:49px;font-weight:900;cursor:pointer}
+@media(max-height:720px){header{padding-top:10px}.title{font-size:27px}.subtitle{display:none}.eyebrow{margin-top:10px}.card{height:55svh;min-height:390px}.front h2{font-size:29px}.lead{font-size:15px}.back{padding:20px}.details{gap:8px;margin-top:14px}.why{margin-top:12px}}
+</style>
 </head>
 <body>
-    <h1>Flakmeter Lastplan – Demo</h1>
-    <div class="summary">
-        <div>Trailer: <span>13,6 m</span> lång, <span>2,4 m</span> bred (≈ 13,6 flakmeter)</div>
-        <div>Beräknad last: <span id="totalFlm"></span></div>
-        <div id="statusText"></div>
-    </div>
-
-    <div id="truck"></div>
-
-    <div class="legend" id="legend"></div>
-
-    <div class="info">
-        Denna sida är en enkel demo. Data är hårdkodad i JavaScript men matchar samma produkter som i Excel-filen
-        <strong>flakmeter_plan.xlsx</strong>. Varje ruta motsvarar en pall och färgen visar produkt.
-    </div>
-
-    <script>
-        const trailerFlm = 13.6;
-
-        const products = [
-            { id: "PROD-001", desc: "Fönster typ A", antalKolli: 120, kolliPerPall: 40, pallL: 1.2, pallB: 0.8, color: "#1f77b4" },
-            { id: "PROD-002", desc: "Fönster typ B", antalKolli: 75,  kolliPerPall: 25, pallL: 1.2, pallB: 0.8, color: "#2ca02c" },
-            { id: "PROD-003", desc: "Dörr typ C",    antalKolli: 60,  kolliPerPall: 20, pallL: 1.2, pallB: 1.0, color: "#ff7f0e" },
-            { id: "PROD-004", desc: "Rutor typ D",   antalKolli: 48,  kolliPerPall: 24, pallL: 1.0, pallB: 1.0, color: "#d62728" }
-        ];
-
-        function buildPallets(data) {
-            const pallets = [];
-            data.forEach(p => {
-                const antalPallar = Math.ceil(p.antalKolli / p.kolliPerPall);
-                for (let i = 0; i < antalPallar; i++) {
-                    pallets.push({
-                        produkt: p.id,
-                        desc: p.desc,
-                        pallL: p.pallL,
-                        pallB: p.pallB,
-                        color: p.color
-                    });
-                }
-            });
-            return pallets;
-        }
-
-        const pallets = buildPallets(products);
-
-        const totalFlm = products.reduce((sum, p) => {
-            const antalPallar = Math.ceil(p.antalKolli / p.kolliPerPall);
-            const flmPerPall = (p.pallL * p.pallB) / 2.4;
-            return sum + antalPallar * flmPerPall;
-        }, 0);
-
-        document.getElementById("totalFlm").textContent = totalFlm.toFixed(2) + " flm";
-
-        const statusText = document.getElementById("statusText");
-        if (totalFlm > trailerFlm) {
-            const over = (totalFlm - trailerFlm).toFixed(2);
-            statusText.textContent = "Status: ÖVERLAST – " + over + " flakmeter över trailergränsen.";
-            statusText.style.color = "#d62728";
-            statusText.style.fontWeight = "600";
-        } else {
-            const margin = (trailerFlm - totalFlm).toFixed(2);
-            statusText.textContent = "Status: OK – " + margin + " flakmeter kvar till max.";
-            statusText.style.color = "#2ca02c";
-            statusText.style.fontWeight = "600";
-        }
-
-        const truckEl = document.getElementById("truck");
-        pallets.forEach((p, index) => {
-            const div = document.createElement("div");
-            div.className = "pallet";
-            div.style.backgroundColor = p.color;
-            div.textContent = p.produkt + " #" + (index + 1);
-            div.title = p.desc;
-            truckEl.appendChild(div);
-        });
-
-        const legendEl = document.getElementById("legend");
-        products.forEach(p => {
-            const item = document.createElement("div");
-            item.className = "legend-item";
-
-            const colorBox = document.createElement("div");
-            colorBox.className = "legend-color";
-            colorBox.style.backgroundColor = p.color;
-
-            const label = document.createElement("span");
-            label.textContent = p.id + " – " + p.desc;
-
-            item.appendChild(colorBox);
-            item.appendChild(label);
-            legendEl.appendChild(item);
-        });
-    </script>
+<div class="app">
+<header>
+  <div class="topline"><div class="brand"><span class="flag" aria-hidden="true"></span> VALVECKAN 2026</div><div class="countdown" id="countdown">13 SEP</div></div>
+  <div class="eyebrow">Nyhetssvep · 26 aug–2 sep</div>
+  <h1 class="title">Svenska valet<br>på 10 kort.</h1>
+  <p class="subtitle">Svep mellan veckans viktigaste valnyheter. Tryck på kortet för enkel fördjupning och källan bakom.</p>
+  <div class="progress-wrap"><div class="progress"><div id="progress"></div></div><div class="counter" id="counter">1/10</div></div>
+</header>
+<main class="stage" id="stage"><div class="card" id="card" role="button" tabindex="0" aria-label="Vänd nyhetskort"><div class="inner"><section class="face front" id="front"></section><section class="face back" id="back"></section></div></div></main>
+<nav class="controls" id="controls"><button class="btn" id="prev">← Föregående</button><button class="btn primary" id="flip">Vänd</button><button class="btn right" id="next">Nästa →</button></nav>
+<div class="note">Statisk nyhetsöversikt uppdaterad 2 september 2026. Sammanfattningar är neutralt komprimerade – öppna källan för full kontext.</div>
+</div>
+<script>
+const cards=[
+{tag:"Opinion",date:"2 sep",title:"Valet har tajtnat rejält",lead:"Oppositionens ledning har krympt till 2,6 procentenheter i Novus/TV4 – elva dagar före valdagen.",source:"SVT / Reuters",url:"https://www.svt.se/nyheter/inrikes/novustv4-gapet-mellan-blocken-26-procentenheter",details:["Oppositionsblocket mäts till 50,3 procent mot 47,7 procent för regeringsunderlaget.","Liberalerna stiger till 3,3 procent – närmare men fortfarande under riksdagsspärren på 4 procent.","Socialdemokraterna mäts till 25,8 procent efter en nedgång på 4,3 procentenheter jämfört med föregående Novusmätning."],why:"Mätningen visar ett betydligt jämnare läge än för två veckor sedan. Men opinionsmätningar är ögonblicksbilder – inte valresultat."},
+{tag:"Röstning",date:"2 sep",title:"Nästan en miljon har redan röstat",lead:"992 863 väljare förtidsröstade under första veckan – 40 procent fler än samma period 2022.",source:"Valmyndigheten",url:"https://www.val.se/servicelankar/servicelankar/pressrum/nyheter--pressmeddelanden/pressmeddelande-nya/2026-09-02-stort-intresse-for-fortidsrostningen-i-arets-val",details:["Förtidsröstningen pågår 26 augusti–13 september.","Det finns 1 875 förtidsröstningslokaler öppna för allmänheten i Sverige.","Valdagen är söndag 13 september; då röstar Sverige även till kommun- och regionfullmäktige."],why:"Den kraftiga ökningen betyder att en stor del av väljarkåren fattar sitt beslut innan valrörelsens sista dagar."},
+{tag:"Vallöfte",date:"2 sep",title:"Tandvården blir en slutspurtsfråga",lead:"S föreslår att vuxna ska betala högst 10 procent av behandlingskostnaden. SD har ett liknande upplägg som sitt främsta vallöfte.",source:"SVT",url:"https://www.svt.se/nyheter/inrikes/senaste-nytt-om-val-2026",details:["S vill att vuxna ska betala max 10 procent av en tandvårdsbehandling och vill åter ha fri tandvård upp till 23 år.","S vill också öka antalet utbildningsplatser för tandläkare och styra tillgången mer efter behov.","SD svarar att deras förslag om ett 10-procentigt högkostnadsskydd har drivits tidigare och beskriver frågan som sitt viktigaste vallöfte."],why:"När två stora partier konkurrerar om liknande reformer flyttas debatten från om till hur, när och hur reformen ska finansieras."},
+{tag:"Regeringsfrågan",date:"2 sep",title:"Busch skärper beskedet om S",lead:"KD-ledaren säger att partiet kommer rösta nej till Magdalena Andersson ända fram till ett eventuellt nyval.",source:"SVT",url:"https://www.svt.se/nyheter/inrikes/senaste-nytt-om-val-2026",details:["Beskedet kom efter flera dagar av diskussion om sammanhållningen inom Tidösidan.","Busch hade tidigare talat om samarbete med S i kris, krig eller andra exceptionella lägen.","Kristersson har samtidigt sagt att han känner sig trygg med Busch och räknar med fortsatt samarbete."],why:"Regeringsfrågan kan bli avgörande om mandatfördelningen blir jämn och inget block får en enkel majoritet."},
+{tag:"Industri & klimat",date:"2 sep",title:"MP lanserar grönt industripaket",lead:"Miljöpartiet vill öka statens stöd till fossilfri industri och elektrifiering för att kombinera klimatmål med konkurrenskraft.",source:"SVT",url:"https://www.svt.se/nyheter/inrikes/senaste-nytt-om-val-2026",details:["Partiet vill öka Industriklivet med 3 miljarder kronor per år.","MP vill återuppta och förstärka gröna kreditgarantier.","Förslaget innehåller även skattekrediter för fossilfri industri, elektrifiering och ny teknik."],why:"Industripolitiken kopplar ihop tre stora valfrågor: jobb, energiförsörjning och klimatomställning."},
+{tag:"Skola",date:"27 aug",title:"L vill lagstifta om mindre klasser",lead:"Liberalerna vill ha bindande regler för klasstorlek och en lägstanivå för lärartäthet.",source:"SVT",url:"https://www.svt.se/nyheter/inrikes/senaste-nytt-om-val-2026?inlagg=fa5eb0757cd6a0b143539dcabcb67309",details:["En utredare har fått i uppdrag att ta fram regler för grundskola, gymnasium och fritidshem.","Utredningen ska också föreslå en lagstadgad lägstanivå för lärartäthet.","Motsvarande reglering för förskolan uppges också vara under arbete."],why:"Skolpolitiken är en profilfråga för L och kan vara central när partiet samtidigt kämpar för att nå riksdagsspärren."},
+{tag:"Valsäkerhet",date:"27 aug",title:"Säpo utreder hot mot L-ledaren",lead:"Säkerhetspolisen har inlett förundersökning om olaga hot mot Simona Mohamsson efter en partiledardebatt.",source:"SVT",url:"https://www.svt.se/nyheter/inrikes/sapo-inleder-forundersokning-efter-hot-mot-mohamsson",details:["Mohamsson hade burit en davidsstjärna under debatten och polisanmälde hot som kom efteråt.","Säpo bekräftar att misstanken gäller olaga hot.","Myndigheten uppger att antalet förundersökningar ligger på en nivå som de väntar sig under ett valår."],why:"Hot mot politiker påverkar inte bara enskilda kandidater utan också förutsättningarna för en öppen och trygg valrörelse."},
+{tag:"Ekonomi",date:"27 aug",title:"V vill höja skatten för högre inkomster",lead:"Vänsterpartiet pekar ut inkomster över 67 000 kronor i månaden som en grupp som kan bidra mer.",source:"SVT",url:"https://www.svt.se/nyheter/inrikes/senaste-nytt-om-val-2026?inlagg=fc01388f189c901ddbb93cae89551acb",details:["Nooshi Dadgostar säger att förslaget berör en relativt liten del av väljarna.","Partiet argumenterar för att högre skatter för höginkomsttagare kan finansiera välfärd och stimulera ekonomin.","Skattepolitiken markerar samtidigt en tydlig konfliktlinje mot Tidöpartiernas ekonomiska linje."],why:"Skattenivåer och finansiering avgör hur partiernas övriga vallöften kan genomföras efter valet."},
+{tag:"Lag & ordning",date:"26 aug",title:"M sätter tidsplan för slopad mängdrabatt",lead:"Moderaterna vill att dagens mängdrabatt i straffsystemet ska vara helt avskaffad senast 1 januari 2029.",source:"SVT",url:"https://www.svt.se/nyheter/inrikes/senaste-nytt-om-val-2026?inlagg=c8a40d3d8998ec4a0fb95b76966b7c0f",details:["Partiet presenterade en plan för hur förändringen ska genomföras stegvis.","Riksdagen hade redan i mitten av augusti beslutat om skärpta regler för personer som döms för flera brott samtidigt.","Kristersson beskrev omläggningen som stor och med omfattande följder för rättssystemet."],why:"Brott och straff är en central valfråga, men genomförandet påverkar också domstolar, kriminalvård och statens kostnader."},
+{tag:"Klimatdebatt",date:"30 aug",title:"Bränslepriset hamnar mitt i klimatdebatten",lead:"Alla åtta riksdagspartier möttes i Agendas klimatdebatt – där drivmedel, utsläpp och industrins omställning blev tydliga konfliktlinjer.",source:"SVT",url:"https://www.svt.se/nyheter/inrikes/senaste-nytt-om-val-2026?inlagg=dbd3ebad973ddb6637756fd082a17b9a",details:["SVT:s kommentator beskrev bränslepriset som en 'elefant i rummet' på båda sidor.","Oppositionen kritiserar regeringens sänkta drivmedelsskatter, samtidigt som beskeden om framtida skattenivåer är omstridda.","Tidöpartierna pressas samtidigt på hur långt ytterligare skattesänkningar kan gå och hur klimatmålen ska nås."],why:"Klimatpolitiken binder ihop hushållens kostnader, transportsektorn, energi och svensk industris långsiktiga konkurrenskraft."}
+];
+let index=0,downX=0,downY=0,dragX=0,dragging=false,moved=false;
+const card=document.getElementById('card'),front=document.getElementById('front'),back=document.getElementById('back'),stage=document.getElementById('stage'),counter=document.getElementById('counter'),progress=document.getElementById('progress'),controls=document.getElementById('controls');
+function esc(s){return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function render(){stage.style.transform='';stage.style.opacity='1';card.classList.remove('flipped');if(index===cards.length){counter.textContent='Klart';progress.style.width='100%';controls.style.visibility='hidden';stage.innerHTML=`<div class="summary"><div class="check">✓</div><h2>Du har fått veckans valbild.</h2><p>På tio kort: opinion, röstning, regeringsfrågan och de viktigaste sakpolitiska utspelen från 26 augusti till 2 september.</p><div class="summary-list">${cards.slice(0,5).map(c=>`<div class="summary-item">${esc(c.tag)} · ${esc(c.title)}</div>`).join('')}<div class="summary-item">+ 5 fler nyheter</div></div><button class="restart" onclick="restart()">Börja om från kort 1</button></div>`;return}
+if(!document.getElementById('card')){stage.innerHTML='<div class="card" id="card" role="button" tabindex="0" aria-label="Vänd nyhetskort"><div class="inner"><section class="face front" id="front"></section><section class="face back" id="back"></section></div></div>';bindCard()}
+controls.style.visibility='visible';const c=cards[index];document.getElementById('front').innerHTML=`<div class="meta"><span class="tag">${esc(c.tag)}</span><span class="date">${esc(c.date)} 2026</span></div><div class="front-copy"><h2>${esc(c.title)}</h2><p class="lead">${esc(c.lead)}</p></div><div class="hint"><span><strong>TRYCK</strong> för detaljer · <strong>SVE P</strong> för nästa</span><span class="flip-icon">↻</span></div>`;
+document.getElementById('back').innerHTML=`<div class="back-top"><div><span class="tag">${esc(c.tag)}</span><h3>${esc(c.title)}</h3></div><span class="source-badge">${esc(c.source)}</span></div><div class="details">${c.details.map((d,i)=>`<div class="detail"><span class="num">${i+1}</span><span>${esc(d)}</span></div>`).join('')}</div><div class="why"><b>Varför det spelar roll</b><span>${esc(c.why)}</span></div><div class="back-footer"><a class="source-link" href="${c.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Öppna källan ↗</a><span class="back-hint">Tryck på kortet<br>för framsidan</span></div>`;
+counter.textContent=`${index+1}/${cards.length}`;progress.style.width=`${((index+1)/cards.length)*100}%`;document.getElementById('prev').disabled=index===0;}
+function flip(){const el=document.getElementById('card');if(el)el.classList.toggle('flipped')}
+function go(dir){const next=index+dir;if(next<0||next>cards.length)return;stage.style.transition='transform .22s ease,opacity .22s ease';stage.style.transform=`translateX(${dir>0?-115:115}%) rotate(${dir>0?-4:4}deg)`;stage.style.opacity='0';setTimeout(()=>{index=next;render()},210)}
+function restart(){index=0;stage.innerHTML='<div class="card" id="card" role="button" tabindex="0" aria-label="Vänd nyhetskort"><div class="inner"><section class="face front" id="front"></section><section class="face back" id="back"></section></div></div>';bindCard();render()}
+function bindCard(){const el=document.getElementById('card');if(!el)return;el.addEventListener('click',e=>{if(!moved&&!e.target.closest('a,button'))flip()});el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();flip()}})}
+document.getElementById('flip').onclick=flip;document.getElementById('prev').onclick=()=>go(-1);document.getElementById('next').onclick=()=>go(1);
+stage.addEventListener('pointerdown',e=>{if(e.target.closest('a,button'))return;dragging=true;moved=false;downX=e.clientX;downY=e.clientY;dragX=0;stage.setPointerCapture?.(e.pointerId)});
+stage.addEventListener('pointermove',e=>{if(!dragging)return;const dx=e.clientX-downX,dy=e.clientY-downY;if(Math.abs(dy)>Math.abs(dx)&&Math.abs(dy)>12)return;dragX=dx;if(Math.abs(dx)>6)moved=true;stage.style.transition='none';stage.style.transform=`translateX(${dx}px) rotate(${dx/35}deg)`;stage.style.opacity=`${Math.max(.55,1-Math.abs(dx)/450)}`});
+stage.addEventListener('pointerup',()=>{if(!dragging)return;dragging=false;stage.style.transition='transform .22s ease,opacity .22s ease';if(Math.abs(dragX)>78){go(dragX<0?1:-1)}else{stage.style.transform='';stage.style.opacity='1'}setTimeout(()=>moved=false,40)});
+function setCountdown(){const now=new Date();const election=new Date('2026-09-13T20:00:00+02:00');const days=Math.ceil((election-now)/86400000);document.getElementById('countdown').textContent=days>1?`${days} DAGAR KVAR`:days===1?'1 DAG KVAR':days===0?'VALDAGEN':'VALET 2026'}
+bindCard();setCountdown();render();
+</script>
 </body>
 </html>
